@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Strake Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 15px;
+  color: #333;
+  background: #fff;
+}
+a { text-decoration: none; color: inherit; }
+img { display: block; max-width: 100%; }
+
+/* ── LITURGICAL SEASON VARIABLES ── */
+:root {
+  --gold: #8b6914;
+  --dark: #1a1208;
+  --light-bg: #f9f5ee;
+  --rule: #c8aa5a;
+  --season-bar: #5a2d0c;
+  --season-bar-text: #f5e8cc;
+}
+body.advent   { --season-bar:#4b0082; --rule:#9370db; }
+body.christmas{ --season-bar:#7a0000; --rule:#c8aa5a; }
+body.lent     { --season-bar:#4a0070; --rule:#8b5e9e; }
+body.easter   { --season-bar:#7a6000; --rule:#d4af37; }
+body.ordinary { --season-bar:#1a4a1a; --rule:#4caf50; }
+
+/* ── TOP ANNOUNCEMENT BAR ── */
+.announce-bar {
+  background: var(--season-bar);
+  color: var(--season-bar-text);
+  text-align: center;
+  padding: 8px 20px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 20px;
+}
+.announce-bar a { color: #ffd98a; text-decoration: underline; }
+.announce-bar a:hover { color: #fff; }
+.season-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-left: 12px;
+}
+.sdot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.sdot:hover { transform: scale(1.3); border-color: #fff; }
+.sdot.advent    { background: #4b0082; }
+.sdot.christmas { background: #8b0000; }
+.sdot.lent      { background: #5a007a; }
+.sdot.easter    { background: #c8960c; }
+.sdot.ordinary  { background: #1a5a1a; }
+.sdot.default   { background: #5a2d0c; }
+
+/* ── HEADER ── */
+header {
+  background: #fff;
+  border-bottom: 3px solid var(--rule);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 80px;
+  position: sticky; top: 0; z-index: 200;
+  transition: border-color 0.5s;
+}
+.logo-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo-cross {
+  font-size: 2.2rem;
+  color: var(--gold);
+  line-height: 1;
+}
+.logo-text {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #2a1500;
+  line-height: 1.2;
+}
+.logo-text small {
+  display: block;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8a6a30;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+/* ── NAV ── */
+nav ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+nav ul li {
+  position: relative;
+}
+nav ul li > a {
+  display: block;
+  padding: 28px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #2a1a06;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+nav ul li > a:hover { color: var(--gold); }
+nav ul li:hover > a { color: var(--gold); }
+
+/* dropdown */
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border-top: 3px solid var(--rule);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+  min-width: 200px;
+  display: none;
+  z-index: 300;
+}
+nav ul li:hover .dropdown { display: block; }
+.dropdown li a {
+  display: block;
+  padding: 11px 20px;
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #333;
+  border-bottom: 1px solid #f0e8d8;
+  transition: background 0.15s, color 0.15s;
+}
+.dropdown li:last-child a { border-bottom: none; }
+.dropdown li a:hover { background: #faf4e8; color: var(--gold); }
+
+/* apply button */
+.nav-apply-btn {
+  background: var(--season-bar);
+  color: #fff !important;
+  padding: 10px 18px !important;
+  border-radius: 3px;
+  margin-left: 8px;
+  transition: opacity 0.2s !important;
+}
+.nav-apply-btn:hover { opacity: 0.85; color: #fff !important; }
+
+/* ── SLIDER ── */
+.slider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #1a0a00;
+}
+.slides {
+  display: flex;
+  transition: transform 0.7s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+.slide {
+  min-width: 100%;
+  position: relative;
+}
+.slide img {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.82);
+}
+.slide-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(10,4,0,0.72));
+  color: #fff;
+  padding: 40px 48px 28px;
+  font-family: 'EB Garamond', serif;
+  font-size: 1.6rem;
+  font-style: italic;
+  font-weight: 400;
+}
+.slider-prev, .slider-next {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  background: rgba(0,0,0,0.4);
+  color: #fff;
+  border: none;
+  width: 44px; height: 44px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.slider-prev:hover, .slider-next:hover { background: rgba(0,0,0,0.7); }
+.slider-prev { left: 16px; }
+.slider-next { right: 16px; }
+.slider-dots {
+  position: absolute;
+  bottom: 14px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px;
+}
+.slider-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+.slider-dot.active { background: #fff; }
+
+/* ── MISSION INTRO ── */
+.mission-intro {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 56px 32px 40px;
+  text-align: center;
+}
+.mission-intro p {
+  font-size: 1.04rem;
+  line-height: 1.9;
+  color: #3a2c14;
+  margin-bottom: 18px;
+}
+.mission-intro p:first-child {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.22rem;
+  font-style: italic;
+  color: #2a1a06;
+}
+.mission-values {
+  margin-top: 28px;
+  font-family: 'EB Garamond', serif;
+  font-size: 1.08rem;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  line-height: 2.1;
+}
+.mission-values strong {
+  font-weight: 600;
+  color: #2a1500;
+}
+.rule { width: 80px; height: 2px; background: var(--rule); margin: 28px auto; }
+
+/* ── PAGE SECTIONS (inner pages simulation) ── */
+.page-section {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 56px 32px;
+}
+.page-section h1 {
+  font-family: 'EB Garamond', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  color: #2a1500;
+  margin-bottom: 6px;
+}
+.section-rule {
+  width: 60px; height: 3px;
+  background: var(--rule);
+  margin-bottom: 32px;
+}
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+.three-col {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 32px;
+}
+@media(max-width:780px) {
+  .two-col, .three-col { grid-template-columns: 1fr; }
+}
+
+/* ── GRANTS / HIGHLIGHTS ── */
+.highlight-card {
+  border: 1px solid #e8dcc8;
+  border-radius: 3px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.highlight-card:hover { box-shadow: 0 4px 20px rgba(90,45,12,0.14); }
+.highlight-card img {
+  width: 100%; height: 200px; object-fit: cover;
+  filter: sepia(10%);
+}
+.hcard-body { padding: 20px; }
+.hcard-cat {
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.hcard-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.15rem;
+  color: #2a1500;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+.hcard-desc {
+  font-size: 0.83rem;
+  color: #5a4a2a;
+  line-height: 1.7;
+}
+.hcard-more {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid var(--gold);
+  transition: opacity 0.2s;
+}
+.hcard-more:hover { opacity: 0.7; }
+
+/* ── ABOUT / PEOPLE ── */
+.person-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+.person-item {
+  background: #faf4e8;
+  border: 1px solid #e8dcc8;
+  border-radius: 3px;
+  padding: 16px 20px;
+  min-width: 180px;
+  flex: 1;
+}
+.person-name {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2a1500;
+  margin-bottom: 3px;
+}
+.person-title {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.section-heading {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.3rem;
+  color: #2a1500;
+  font-weight: 600;
+  margin: 32px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8dcc8;
+}
+
+/* ── APPLY ── */
+.apply-box {
+  background: #faf4e8;
+  border: 1px solid #e0cc9a;
+  border-left: 4px solid var(--rule);
+  border-radius: 3px;
+  padding: 28px 32px;
+  margin-bottom: 28px;
+}
+.apply-box h3 {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.25rem;
+  color: #2a1500;
+  margin-bottom: 12px;
+}
+.apply-box ul {
+  padding-left: 20px;
+}
+.apply-box ul li {
+  font-size: 0.88rem;
+  color: #4a3a1a;
+  line-height: 1.8;
+}
+.apply-box p { font-size: 0.9rem; color: #4a3a1a; line-height: 1.75; }
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--season-bar);
+  color: #fff;
+  padding: 11px 24px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+  margin-top: 16px;
+}
+.btn-download:hover { opacity: 0.85; }
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--gold);
+  padding: 11px 24px;
+  border-radius: 3px;
+  border: 2px solid var(--gold);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+  margin-top: 16px;
+  margin-left: 10px;
+}
+.btn-outline:hover { background: var(--gold); color: #fff; }
+
+/* ── HERITAGE / LEGACY ── */
+.heritage-photo {
+  width: 100%;
+  border-radius: 3px;
+  box-shadow: 4px 6px 24px rgba(90,45,12,0.15);
+  margin-bottom: 16px;
+  filter: sepia(12%) contrast(1.04);
+}
+.heritage-caption {
+  font-size: 0.75rem;
+  color: #8a6a30;
+  text-align: center;
+  font-style: italic;
+}
+.heritage-body {
+  font-size: 0.92rem;
+  line-height: 1.9;
+  color: #3a2c14;
+}
+.heritage-body p { margin-bottom: 16px; }
+.heritage-body h3 {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.3rem;
+  color: #2a1500;
+  margin: 28px 0 10px;
+}
+
+/* ── STATS BAR ── */
+.stats-bar {
+  background: var(--season-bar);
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+  padding: 0;
+  transition: background 0.5s;
+}
+.stat-block {
+  flex: 1;
+  min-width: 180px;
+  text-align: center;
+  padding: 28px 24px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+.stat-block:last-child { border-right: none; }
+.stat-n {
+  font-family: 'EB Garamond', serif;
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: #ffd98a;
+  line-height: 1;
+  display: block;
+}
+.stat-l {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  margin-top: 5px;
+  display: block;
+}
+
+/* ── CONTACT ── */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+@media(max-width:640px){ .contact-grid{ grid-template-columns:1fr; } }
+.contact-info p {
+  font-size: 0.92rem;
+  line-height: 1.9;
+  color: #3a2c14;
+  margin-bottom: 10px;
+}
+.contact-info a { color: var(--gold); }
+.contact-info a:hover { text-decoration: underline; }
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  border: 1px solid #d8c8a0;
+  border-radius: 2px;
+  padding: 10px 14px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #2a1500;
+  background: #faf4e8;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.contact-form input:focus,
+.contact-form textarea:focus { border-color: var(--gold); }
+.contact-form textarea { height: 120px; resize: vertical; }
+.contact-form button {
+  background: var(--season-bar);
+  color: #fff;
+  border: none;
+  padding: 11px 28px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.contact-form button:hover { opacity: 0.85; }
+
+/* ── TABS (content switching) ── */
+.tab-nav {
+  display: flex;
+  border-bottom: 2px solid #e8dcc8;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.tab-btn {
+  padding: 11px 22px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #7a5a2a;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.tab-btn:hover { color: var(--gold); }
+.tab-btn.active { color: #2a1500; border-bottom-color: var(--gold); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── FOOTER ── */
+footer {
+  background: #1a1208;
+  color: rgba(255,255,255,0.55);
+  padding: 0;
+}
+.footer-main {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  padding: 52px 40px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+@media(max-width:780px){ .footer-main{ grid-template-columns:1fr 1fr; } }
+@media(max-width:480px){ .footer-main{ grid-template-columns:1fr; } }
+.footer-brand-name {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.2rem;
+  color: #ffd98a;
+  margin-bottom: 10px;
+}
+.footer-brand-name small {
+  display: block;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-top: 2px;
+}
+.footer-desc {
+  font-size: 0.82rem;
+  line-height: 1.8;
+  max-width: 300px;
+  margin-bottom: 14px;
+}
+.footer-addr {
+  font-size: 0.82rem;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.45);
+}
+.footer-col h5 {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #ffd98a;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 9px; }
+.footer-col ul li a {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.5);
+  transition: color 0.2s;
+}
+.footer-col ul li a:hover { color: #ffd98a; }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.25);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.footer-cross { color: #c8aa5a; font-size: 1rem; }
+
+/* ── UTILITY ── */
+.text-gold { color: var(--gold); }
+.mb-8 { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-32 { margin-bottom: 32px; }
+.faq-item { border-bottom: 1px solid #e8dcc8; padding: 18px 0; }
+.faq-q {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2a1500;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.faq-q::after { content: '+'; font-size: 1.3rem; color: var(--gold); }
+.faq-item.open .faq-q::after { content: '−'; }
+.faq-a {
+  font-size: 0.88rem;
+  color: #4a3a1a;
+  line-height: 1.8;
+  margin-top: 10px;
+  display: none;
+}
+.faq-item.open .faq-a { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ANNOUNCE BAR -->
+<div class="announce-bar">
+  <span>Our 2024 Annual Report is now available »</span>
+  <span>|</span>
+  <span>Liturgical Season:
+    <span id="season-label">Ordinary Time</span>
+  </span>
+  <div class="season-dots">
+    <div class="sdot advent"    title="Advent"         onclick="setSeason('advent','Advent')"></div>
+    <div class="sdot christmas" title="Christmas"      onclick="setSeason('christmas','Christmas')"></div>
+    <div class="sdot lent"      title="Lent"           onclick="setSeason('lent','Lent')"></div>
+    <div class="sdot easter"    title="Easter"         onclick="setSeason('easter','Easter')"></div>
+    <div class="sdot ordinary"  title="Ordinary Time"  onclick="setSeason('ordinary','Ordinary Time')"></div>
+    <div class="sdot default"   title="Default"        onclick="setSeason('','Ordinary Time')"></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <a href="#" class="logo-block" onclick="showPage('home')">
+    <span class="logo-cross">✝</span>
+    <div class="logo-text">
+      The Strake Foundation
+      <small>Est. 1952 · Houston, Texas</small>
+    </div>
+  </a>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="#" onclick="showPage('grants')">Grants</a>
+        <ul class="dropdown">
+          <li><a href="#" onclick="showPage('highlights')">Grantee Highlights</a></li>
+          <li><a href="#" onclick="showPage('grants')">Grants Distribution</a></li>
+          <li><a href="#" onclick="showPage('grants')">Annual Reports</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#" onclick="showPage('apply')">Grant Applications</a>
+        <ul class="dropdown">
+          <li><a href="#" onclick="showPage('apply')">Application Guidelines</a></li>
+          <li><a href="#" onclick="showPage('apply')">Application FAQ</a></li>
+          <li><a href="#" onclick="showPage('apply')">Grant Reports</a></li>
+        </ul>
+      </li>
+      <li><a href="#" onclick="showPage('mission')">Mission</a></li>
+      <li>
+        <a href="#" onclick="showPage('about')">About Us</a>
+        <ul class="dropdown">
+          <li><a href="#" onclick="showPage('about')">Directors</a></li>
+          <li><a href="#" onclick="showPage('about')">Staff</a></li>
+          <li><a href="#" onclick="showPage('about')">In Memoriam</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#" onclick="showPage('legacy')">Our Legacy</a>
+        <ul class="dropdown">
+          <li><a href="#" onclick="showPage('legacy')">Strake Heritage</a></li>
+          <li><a href="#" onclick="showPage('legacy')">The Conroe Oil Field</a></li>
+          <li><a href="#" onclick="showPage('legacy')">The Fisherman's Tomb</a></li>
+        </ul>
+      </li>
+      <li><a href="#" onclick="showPage('contact')">Contact Us</a></li>
+      <li><a href="#" class="nav-apply-btn" onclick="showPage('apply')">Apply</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ════════════════════════════════════════════
+     HOME PAGE
+════════════════════════════════════════════ -->
+<div id="page-home">
+
+  <!-- SLIDER -->
+  <div class="slider">
+    <div class="slides" id="slides">
+      <div class="slide">
+        <img src="https://placehold.co/1920x500/2a1000/8b5010?text=The+Conroe+Oil+Field+—+A+Texas+Legacy" alt="Conroe Oil Field">
+        <div class="slide-caption">Honoring the entrepreneurial spirit of the Conroe Oil Field</div>
+      </div>
+      <div class="slide">
+        <img src="https://placehold.co/1920x500/1a0030/8060a0?text=The+Fisherman%27s+Tomb+—+Faith+%26+Perseverance" alt="Faith">
+        <div class="slide-caption">Grounded in enduring Catholic faith and the legacy of Saint Peter</div>
+      </div>
+      <div class="slide">
+        <img src="https://placehold.co/1920x500/0f1a0a/407040?text=George+W.+Strake+Sr.+%26+Jr.+—+Family+Legacy" alt="Strake Family">
+        <div class="slide-caption">Three generations of faithful stewardship</div>
+      </div>
+      <div class="slide">
+        <img src="https://placehold.co/1920x500/1a0a00/7a4010?text=Supporting+Catholic+Education+%26+Formation" alt="Education">
+        <div class="slide-caption">Investing in the formation of faithful, virtuous human beings</div>
+      </div>
+      <div class="slide">
+        <img src="https://placehold.co/1920x500/0a0a1a/3a3a7a?text=Houston%2C+Texas+—+Our+Home" alt="Houston">
+        <div class="slide-caption">Serving communities across Houston and beyond since 1956</div>
+      </div>
+      <div class="slide">
+        <img src="https://placehold.co/1920x500/1a1000/7a6010?text=Distributing+%243+Million+Annually+in+Charitable+Grants" alt="Giving">
+        <div class="slide-caption">Approximately $3 million distributed to worthy causes each year</div>
+      </div>
+    </div>
+    <button class="slider-prev" onclick="moveSlide(-1)">&#8249;</button>
+    <button class="slider-next" onclick="moveSlide(1)">&#8250;</button>
+    <div class="slider-dots" id="slider-dots"></div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-block">
+      <span class="stat-n">$3M</span>
+      <span class="stat-l">Distributed Annually</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-n">~400</span>
+      <span class="stat-l">Requests Per Year</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-n">10,000</span>
+      <span class="stat-l">Barrels / Day</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-n">1952</span>
+      <span class="stat-l">Foundation Established</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-n">70+</span>
+      <span class="stat-l">Years of Giving</span>
+    </div>
+  </div>
+
+  <!-- MISSION INTRO -->
+  <div class="mission-intro">
+    <p>Following in the footsteps of our founders and their deep commitment to Catholic faith and American values, our principles are guided by a fundamental belief in traditional Christian teaching, individual dignity, equality of opportunity, self-sufficiency, hard work, and faithful formation.</p>
+    <p>Based on this vision, the Strake Foundation pursues a mission to support conservative Catholic causes, preserve the heritage of George W. Strake and his family, educate individuals and communities in truth, and care for those who are ailing — honoring a legacy of integrity and generous stewardship that spans more than seventy years.</p>
+    <div class="rule"></div>
+    <div class="mission-values">
+      <strong>Traditional Catholic Values</strong> • <strong>Individual Dignity</strong><br>
+      <strong>Faithful Formation</strong> • <strong>Conservative Stewardship</strong><br>
+      <strong>Hard Work</strong> • <strong>Self-Sufficiency</strong> • <strong>Resourcefulness</strong>
+    </div>
+  </div>
+
+  <!-- GRANTEE HIGHLIGHTS PREVIEW -->
+  <div class="page-section" style="padding-top:0;">
+    <h2 style="font-family:'EB Garamond',serif;font-size:1.7rem;color:#2a1500;margin-bottom:6px;">Recent Grantee Highlights</h2>
+    <div class="section-rule"></div>
+    <div class="three-col">
+      <div class="highlight-card">
+        <img src="https://placehold.co/600x200/2a1000/a06020?text=Diocese+of+Galveston-Houston" alt="Diocese">
+        <div class="hcard-body">
+          <div class="hcard-cat">Catholic Faith</div>
+          <div class="hcard-title">Diocese of Galveston-Houston</div>
+          <div class="hcard-desc">Supporting the spiritual formation and pastoral care programs of the Diocese, in alignment with the Foundation's traditional Catholic mission.</div>
+          <a href="#" class="hcard-more">Read More →</a>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <img src="https://placehold.co/600x200/1a1a2a/5a5a9a?text=Benedictine+College" alt="Education">
+        <div class="hcard-body">
+          <div class="hcard-cat">Catholic Education</div>
+          <div class="hcard-title">Benedictine College</div>
+          <div class="hcard-desc">Funding scholarships and academic programs that form students in the Catholic intellectual tradition and prepare them for virtuous lives of service.</div>
+          <a href="#" class="hcard-more">Read More →</a>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <img src="https://placehold.co/600x200/0f1a0f/3a6a3a?text=Christus+Health+Foundation" alt="Healthcare">
+        <div class="hcard-body">
+          <div class="hcard-cat">Healthcare &amp; Compassion</div>
+          <div class="hcard-title">Christus Health Foundation</div>
+          <div class="hcard-desc">Providing charitable care for ailing and dying members of the faithful community — a priority of the Strake family since the Foundation's earliest days.</div>
+          <a href="#" class="hcard-more">Read More →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-home -->
+
+
+<!-- ════════════════════════════════════════════
+     GRANTS PAGE
+════════════════════════════════════════════ -->
+<div id="page-grants" style="display:none;">
+  <div class="page-section">
+    <h1>Grants</h1>
+    <div class="section-rule"></div>
+
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="openTab(this,'tab-highlights')">Grantee Highlights</button>
+      <button class="tab-btn" onclick="openTab(this,'tab-distribution')">Grants Distribution</button>
+      <button class="tab-btn" onclick="openTab(this,'tab-reports')">Annual Reports</button>
+    </div>
+
+    <div id="tab-highlights" class="tab-panel active">
+      <div class="three-col">
+        <div class="highlight-card">
+          <img src="https://placehold.co/600x200/2a1000/a06020?text=Diocese+of+Galveston-Houston" alt="">
+          <div class="hcard-body">
+            <div class="hcard-cat">Catholic Faith · 2024</div>
+            <div class="hcard-title">Diocese of Galveston-Houston — $250,000</div>
+            <div class="hcard-desc">Supporting pastoral and spiritual formation programs consistent with traditional Catholic teaching.</div>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <img src="https://placehold.co/600x200/1a1a2a/5a5a9a?text=Benedictine+College" alt="">
+          <div class="hcard-body">
+            <div class="hcard-cat">Education · 2023</div>
+            <div class="hcard-title">Benedictine College — $120,000</div>
+            <div class="hcard-desc">Scholarships and programs grounding students in the Catholic intellectual tradition.</div>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <img src="https://placehold.co/600x200/0f1a0f/3a6a3a?text=Christus+Health" alt="">
+          <div class="hcard-body">
+            <div class="hcard-cat">Healthcare · 2023</div>
+            <div class="hcard-title">Christus Health Foundation — $95,000</div>
+            <div class="hcard-desc">Charitable care for the ailing faithful, a defining priority of George W. Strake Sr.</div>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <img src="https://placehold.co/600x200/1a0a0a/6a2a2a?text=Catholic+Charities+of+Houston" alt="">
+          <div class="hcard-body">
+            <div class="hcard-cat">Social Services · 2023</div>
+            <div class="hcard-title">Catholic Charities of Houston — $75,000</div>
+            <div class="hcard-desc">Supporting families and individuals in need through a lens of faith and dignity.</div>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <img src="https://placehold.co/600x200/0a1a1a/2a6a6a?text=University+of+Dallas" alt="">
+          <div class="hcard-body">
+            <div class="hcard-cat">Education · 2022</div>
+            <div class="hcard-title">University of Dallas (Theology) — $50,000</div>
+            <div class="hcard-desc">Funding theology programs that form students in the depth of the Catholic tradition.</div>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <img src="https://placehold.co/600x200/1a100a/6a4a1a?text=Franciscan+Sisters+of+the+Poor" alt="">
+          <div class="hcard-body">
+            <div class="hcard-cat">Religious · 2022</div>
+            <div class="hcard-title">Franciscan Sisters of the Poor — $60,000</div>
+            <div class="hcard-desc">Supporting the sisters' apostolate of healthcare and service to those most in need.</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:0.78rem;color:#8a6030;margin-top:20px;font-style:italic;">* Recipients shown are illustrative placeholders.</p>
+    </div>
+
+    <div id="tab-distribution" class="tab-panel">
+      <h3 class="section-heading">Annual Grants Distribution</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+        <thead>
+          <tr style="background:#2a1500;color:#ffd98a;">
+            <th style="padding:12px 16px;text-align:left;">Recipient</th>
+            <th style="padding:12px 16px;text-align:left;">Category</th>
+            <th style="padding:12px 16px;text-align:left;">Year</th>
+            <th style="padding:12px 16px;text-align:right;">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #e8dcc8;">
+            <td style="padding:12px 16px;">Diocese of Galveston-Houston</td>
+            <td style="padding:12px 16px;color:#8a6030;">Catholic Faith</td>
+            <td style="padding:12px 16px;">2024</td>
+            <td style="padding:12px 16px;text-align:right;font-family:'EB Garamond',serif;font-size:1rem;color:#5a2d0c;">$250,000</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e8dcc8;background:#fdf8f0;">
+            <td style="padding:12px 16px;">St. Joseph Medical Center</td>
+            <td style="padding:12px 16px;color:#8a6030;">Healthcare</td>
+            <td style="padding:12px 16px;">2024</td>
+            <td style="padding:12px 16px;text-align:right;font-family:'EB Garamond',serif;font-size:1rem;color:#5a2d0c;">$180,000</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e8dcc8;">
+            <td style="padding:12px 16px;">Benedictine College</td>
+            <td style="padding:12px 16px;color:#8a6030;">Education</td>
+            <td style="padding:12px 16px;">2023</td>
+            <td style="padding:12px 16px;text-align:right;font-family:'EB Garamond',serif;font-size:1rem;color:#5a2d0c;">$120,000</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e8dcc8;background:#fdf8f0;">
+            <td style="padding:12px 16px;">Christus Health Foundation</td>
+            <td style="padding:12px 16px;color:#8a6030;">Healthcare</td>
+            <td style="padding:12px 16px;">2023</td>
+            <td style="padding:12px 16px;text-align:right;font-family:'EB Garamond',serif;font-size:1rem;color:#5a2d0c;">$95,000</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e8dcc8;">
+            <td style="padding:12px 16px;">Catholic Charities of Houston</td>
+            <td style="padding:12px 16px;color:#8a6030;">Social Services</td>
+            <td style="padding:12px 16px;">2023</td>
+            <td style="padding:12px 16px;text-align:right;font-family:'EB Garamond',serif;font-size:1rem;color:#5a2d0c;">$75,000</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.78rem;color:#8a6030;margin-top:16px;font-style:italic;">* Illustrative data.</p>
+    </div>
+
+    <div id="tab-reports" class="tab-panel">
+      <h3 class="section-heading">Annual Reports</h3>
+      <ul style="list-style:none;padding:0;">
+        <li style="padding:14px 0;border-bottom:1px solid #e8dcc8;font-size:0.9rem;display:flex;align-items:center;gap:14px;">
+          <span style="color:#c8aa5a;font-size:1.2rem;">📄</span>
+          <div>
+            <div style="font-weight:600;color:#2a1500;">2024 Annual Report</div>
+            <div style="font-size:0.78rem;color:#8a6030;">PDF · Now Available</div>
+          </div>
+          <a href="#" style="margin-left:auto;font-size:0.75rem;font-weight:600;color:#8b6914;border:1px solid #8b6914;padding:6px 14px;border-radius:2px;">Download</a>
+        </li>
+        <li style="padding:14px 0;border-bottom:1px solid #e8dcc8;font-size:0.9rem;display:flex;align-items:center;gap:14px;">
+          <span style="color:#c8aa5a;font-size:1.2rem;">📄</span>
+          <div>
+            <div style="font-weight:600;color:#2a1500;">2023 Annual Report</div>
+            <div style="font-size:0.78rem;color:#8a6030;">PDF</div>
+          </div>
+          <a href="#" style="margin-left:auto;font-size:0.75rem;font-weight:600;color:#8b6914;border:1px solid #8b6914;padding:6px 14px;border-radius:2px;">Download</a>
+        </li>
+        <li style="padding:14px 0;border-bottom:1px solid #e8dcc8;font-size:0.9rem;display:flex;align-items:center;gap:14px;">
+          <span style="color:#c8aa5a;font-size:1.2rem;">📄</span>
+          <div>
+            <div style="font-weight:600;color:#2a1500;">2022 Annual Report</div>
+            <div style="font-size:0.78rem;color:#8a6030;">PDF</div>
+          </div>
+          <a href="#" style="margin-left:auto;font-size:0.75rem;font-weight:600;color:#8b6914;border:1px solid #8b6914;padding:6px 14px;border-radius:2px;">Download</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     GRANT APPLICATIONS PAGE
+════════════════════════════════════════════ -->
+<div id="page-apply" style="display:none;">
+  <div class="page-section">
+    <h1>Grant Applications</h1>
+    <div class="section-rule"></div>
+
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="openTab(this,'atab-guidelines')">Application Guidelines</button>
+      <button class="tab-btn" onclick="openTab(this,'atab-faq')">Application FAQ</button>
+      <button class="tab-btn" onclick="openTab(this,'atab-reports')">Grant Reports</button>
+    </div>
+
+    <div id="atab-guidelines" class="tab-panel active">
+      <div class="two-col">
+        <div>
+          <div class="apply-box">
+            <h3>Before You Apply</h3>
+            <p>The Strake Foundation distributes approximately <strong>$3 million annually</strong> across roughly 400 requests. Only organizations whose mission aligns with the Foundation's traditional Catholic values and donor intent will be considered.</p>
+          </div>
+          <div class="apply-box">
+            <h3>Eligibility Requirements</h3>
+            <ul>
+              <li>Must be a 501(c)(3) tax-exempt organization</li>
+              <li>Must be aligned with traditional Catholic or conservative Christian values</li>
+              <li>Must not support woke, DEI, or ideologically contrary initiatives</li>
+              <li>Must represent causes George W. Strake Sr. or Jr. would have directly endorsed</li>
+              <li>Priority given to Catholic education, healthcare, and religious formation</li>
+              <li>Care for ailing and dying members of the faithful community is a priority</li>
+            </ul>
+          </div>
+          <div class="apply-box">
+            <h3>How to Apply</h3>
+            <ul>
+              <li><strong>Step 1:</strong> Download and complete the PDF application form below</li>
+              <li><strong>Step 2:</strong> Gather the 5 required supporting documents</li>
+              <li><strong>Step 3:</strong> Submit completed application + all documents via email to the Foundation</li>
+              <li><strong>Step 4:</strong> Await review by the Foundation Board</li>
+            </ul>
+            <a href="#" class="btn-download">⬇ Download Application (PDF)</a>
+            <a href="#" class="btn-outline">Email Submission Instructions</a>
+          </div>
+        </div>
+        <div>
+          <div class="apply-box">
+            <h3>Required Supporting Documents</h3>
+            <ul>
+              <li>IRS determination letter confirming 501(c)(3) status</li>
+              <li>Most recent audited financial statements</li>
+              <li>Current fiscal year budget</li>
+              <li>Project or program narrative</li>
+              <li>Letter of endorsement from a Catholic pastor or bishop (if applicable)</li>
+            </ul>
+          </div>
+          <div class="apply-box">
+            <h3>What We Do Not Fund</h3>
+            <ul>
+              <li>Woke or DEI initiatives of any kind</li>
+              <li>Organizations contrary to traditional Catholic or Christian teaching</li>
+              <li>Causes George Sr. or George Jr. Strake would not have endorsed</li>
+              <li>Political campaigns or lobbying</li>
+              <li>Individuals (grants are made to organizations only)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="atab-faq" class="tab-panel">
+      <h3 class="section-heading">Frequently Asked Questions</h3>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">When does the Foundation accept applications?</div>
+        <div class="faq-a">Applications are accepted on a rolling basis throughout the year. The Foundation board reviews requests and makes grant decisions quarterly.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How large are typical grants?</div>
+        <div class="faq-a">Grant sizes vary widely depending on the project and organizational need. The Foundation distributes approximately $3 million per year across roughly 400 requests.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Do you fund individuals?</div>
+        <div class="faq-a">No. Grants are made only to qualified 501(c)(3) tax-exempt organizations. Individual requests are not considered.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Can non-Catholic organizations apply?</div>
+        <div class="faq-a">Organizations grounded in traditional Bible-based Christianity may apply, but priority is given to conservative Catholic organizations whose mission aligns with the Strake family's donor intent.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How are decisions made?</div>
+        <div class="faq-a">All applications are reviewed by the Foundation Board, which evaluates each request against the Strake family's donor intent, values, and mission priorities.</div>
+      </div>
+    </div>
+
+    <div id="atab-reports" class="tab-panel">
+      <h3 class="section-heading">Grant Reports</h3>
+      <p style="font-size:0.9rem;color:#4a3a1a;line-height:1.8;">Grantee organizations are required to submit a brief grant report upon completion of funded projects. Report forms are provided to grantees at the time of the award. Please contact the Foundation for more information.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     MISSION PAGE
+════════════════════════════════════════════ -->
+<div id="page-mission" style="display:none;">
+  <div class="page-section">
+    <h1>Mission</h1>
+    <div class="section-rule"></div>
+    <div class="two-col">
+      <div>
+        <p style="font-family:'EB Garamond',serif;font-size:1.25rem;font-style:italic;color:#2a1500;line-height:1.65;margin-bottom:28px;">Building on the Strake family's belief in the transformative power of faith and faithful formation, the Foundation strengthens communities, preserves the heritage of Texas and the Catholic Church, and honors every person's God-given dignity.</p>
+        <p style="font-size:0.93rem;line-height:1.9;color:#3a2c14;margin-bottom:18px;">The George W. Strake Foundation advances the vision of its founders through dedication to traditional Catholic beliefs and conservative American values, specifically:</p>
+        <div class="rule" style="margin:0 0 24px 0;"></div>
+        <p style="font-family:'EB Garamond',serif;font-size:1.1rem;color:#8b6914;line-height:2.2;text-align:center;">
+          Traditional Catholic Faith • Conservative Stewardship<br>
+          Individual Dignity • Faithful Formation<br>
+          Self-Sufficiency • Hard Work • Resourcefulness
+        </p>
+        <div class="rule" style="margin:24px 0;"></div>
+        <h3 style="font-family:'EB Garamond',serif;font-size:1.2rem;color:#2a1500;margin-bottom:14px;">What the Foundation Funds</h3>
+        <ul style="padding-left:20px;font-size:0.9rem;color:#3a2c14;line-height:2;">
+          <li>Traditional Catholic and conservative Christian organizations</li>
+          <li>Catholic education, schools, and universities</li>
+          <li>Faithful formation programs and human development</li>
+          <li>Care for ailing and dying members of the faithful community</li>
+          <li>Preservation of the Strake family legacy and Texas heritage</li>
+          <li>Programs honoring the memory of George Sr., George Jr., and Susan Keough Strake</li>
+        </ul>
+        <h3 style="font-family:'EB Garamond',serif;font-size:1.2rem;color:#2a1500;margin:24px 0 14px;">What the Foundation Does Not Fund</h3>
+        <ul style="padding-left:20px;font-size:0.9rem;color:#3a2c14;line-height:2;">
+          <li>Woke or DEI initiatives of any kind</li>
+          <li>Causes contrary to traditional Catholic or Christian teaching</li>
+          <li>Organizations misrepresenting the values of the founding Strake family</li>
+        </ul>
+      </div>
+      <div>
+        <img src="https://placehold.co/600x750/2a1000/a06020?text=George+W.+Strake+Sr.+%26+Jr." alt="Strake Family" style="width:100%;border-radius:3px;box-shadow:4px 6px 24px rgba(90,45,12,0.18);filter:sepia(12%);">
+        <p style="font-size:0.75rem;color:#8a6030;text-align:center;margin-top:10px;font-style:italic;">George W. Strake, Sr. &amp; George W. Strake, Jr.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     ABOUT US PAGE
+════════════════════════════════════════════ -->
+<div id="page-about" style="display:none;">
+  <div class="page-section">
+    <h1>About Us</h1>
+    <div class="section-rule"></div>
+
+    <h2 class="section-heading">Directors</h2>
+    <div class="person-grid">
+      <div class="person-item">
+        <div class="person-name">George W. "Trey" Strake, III</div>
+        <div class="person-title">Chairman</div>
+      </div>
+      <div class="person-item">
+        <div class="person-name">[Director Name]</div>
+        <div class="person-title">Director</div>
+      </div>
+      <div class="person-item">
+        <div class="person-name">[Director Name]</div>
+        <div class="person-title">Director</div>
+      </div>
+      <div class="person-item">
+        <div class="person-name">[Director Name]</div>
+        <div class="person-title">Director</div>
+      </div>
+    </div>
+
+    <h2 class="section-heading">Staff</h2>
+    <div class="person-grid">
+      <div class="person-item">
+        <div class="person-name">[President Name]</div>
+        <div class="person-title">President</div>
+      </div>
+      <div class="person-item">
+        <div class="person-name">[Controller Name]</div>
+        <div class="person-title">Controller</div>
+      </div>
+      <div class="person-item">
+        <div class="person-name">[Grants Officer Name]</div>
+        <div class="person-title">Grants Officer</div>
+      </div>
+    </div>
+
+    <h2 class="section-heading">In Memoriam</h2>
+    <div class="two-col">
+      <div style="display:flex;gap:20px;align-items:flex-start;">
+        <img src="https://placehold.co/120x120/2a1000/8b5010?text=GWS+Jr" alt="George W. Strake Jr." style="width:100px;height:100px;object-fit:cover;border-radius:50%;filter:sepia(15%);flex-shrink:0;">
+        <div>
+          <div style="font-family:'EB Garamond',serif;font-size:1.15rem;color:#2a1500;margin-bottom:4px;">The Honorable George William Strake, Jr.</div>
+          <div style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:#8b6914;margin-bottom:10px;">June 10, 1935 – 2024</div>
+          <p style="font-size:0.87rem;line-height:1.8;color:#4a3a1a;">A devoted husband, father, businessman, and philanthropist whose Catholic faith shaped every aspect of his life. George Jr. served as President of the Strake Foundation and as Texas Secretary of State, carrying his family's legacy of service, faith, and integrity into the twenty-first century.</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:20px;align-items:flex-start;">
+        <img src="https://placehold.co/120x120/1a0a00/6a3a08?text=GWS+Sr" alt="George W. Strake Sr." style="width:100px;height:100px;object-fit:cover;border-radius:50%;filter:sepia(15%);flex-shrink:0;">
+        <div>
+          <div style="font-family:'EB Garamond',serif;font-size:1.15rem;color:#2a1500;margin-bottom:4px;">George W. Strake, Sr.</div>
+          <div style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:#8b6914;margin-bottom:10px;">1894 – 1969</div>
+          <p style="font-size:0.87rem;line-height:1.8;color:#4a3a1a;">Oilman, Catholic philanthropist, and the founder of the Strake Foundation. George Sr.'s discovery of the Conroe Oil Field and his deep devotion to the Church defined a legacy of faith and generous stewardship that continues to guide the Foundation today.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     LEGACY PAGE
+════════════════════════════════════════════ -->
+<div id="page-legacy" style="display:none;">
+  <div class="page-section">
+    <h1>Our Legacy</h1>
+    <div class="section-rule"></div>
+
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="openTab(this,'ltab-heritage')">Strake Heritage</button>
+      <button class="tab-btn" onclick="openTab(this,'ltab-conroe')">The Conroe Oil Field</button>
+      <button class="tab-btn" onclick="openTab(this,'ltab-tomb')">The Fisherman's Tomb</button>
+    </div>
+
+    <div id="ltab-heritage" class="tab-panel active">
+      <div class="two-col">
+        <div class="heritage-body">
+          <p>George W. Strake was an oilman and philanthropist who left the majority of his estate to the Foundation when he died in 1969. The Foundation is supported by Mr. Strake's endowment as well as by funds from the estate of Mrs. Susan K. Strake, who died in 1975, and gifts from George W. Strake, Jr., who died in 2024.</p>
+          <p>Together, their lives reflect a legacy of faith and generous stewardship that continues to guide the mission of the Strake Foundation today.</p>
+          <h3>George W. Strake, Sr. (1894–1969)</h3>
+          <p>Born in 1894, George W. Strake rose from modest beginnings to become a significant figure in the Texas oil industry. After serving in World War I, he entered the petroleum business at a time when wildcatters and independent producers were shaping the economic future of Texas.</p>
+          <p>Beyond his success in oil, George W. Strake was deeply guided by his Catholic faith. His commitment to the Church and to charitable causes shaped both his personal life and his philanthropic vision.</p>
+          <h3>Susan Keough Strake (d. 1975)</h3>
+          <p>Mrs. Susan K. Strake shared her husband's devotion to faith and service. After Mr. Strake's death, she continued their charitable efforts and ensured that the family's philanthropic commitments would endure. Her estate further strengthened the Foundation's resources.</p>
+          <h3>George W. Strake, Jr. (1935–2024)</h3>
+          <p>George W. Strake, Jr. carried forward this legacy into the twenty-first century. Through his own generosity and leadership, he reinforced the family's tradition of stewardship and thoughtful giving. He served as Texas Secretary of State and was a graduate of the University of Notre Dame and Harvard Business School.</p>
+        </div>
+        <div>
+          <figure>
+            <img src="https://placehold.co/600x400/2a1000/a06020?text=Strake+Family+Portrait+Placeholder" alt="Strake Family" class="heritage-photo">
+            <figcaption class="heritage-caption">The Strake Family — George Sr., Susan, and George Jr.</figcaption>
+          </figure>
+          <figure style="margin-top:24px;">
+            <img src="https://placehold.co/600x320/1a0a30/6a4a90?text=George+Jr.+%26+Family" alt="George Jr." class="heritage-photo">
+            <figcaption class="heritage-caption">George W. Strake, Jr. — A life of faith, service, and patriotism</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <div id="ltab-conroe" class="tab-panel">
+      <div class="two-col">
+        <div class="heritage-body">
+          <p>Strake became closely associated with the development of the Conroe Oil Field, which would become one of the most important oil discoveries in the state's history.</p>
+          <p>Early in his career, Strake's ambitions took him to Cuba, where he leased land for drilling. The venture went bankrupt — a defining setback that sharpened his geological instincts. Returning to the United States, he applied his hard-won expertise in topography and geology to the fields of Texas.</p>
+          <p>The discovery and expansion of the Conroe field in the 1930s shaped the regional economy and established Conroe as a vital energy hub. The Great Conroe Oil Field documents this chapter of Texas history — a story of resourcefulness, risk, and reward that mirrors the values of the Strake Foundation itself.</p>
+          <a href="#" class="btn-download">Learn More About the Conroe Field</a>
+        </div>
+        <div>
+          <figure>
+            <img src="https://placehold.co/600x400/3d1a00/c07030?text=The+Great+Conroe+Oil+Field+1930s" alt="Conroe" class="heritage-photo">
+            <figcaption class="heritage-caption">The Great Conroe Oil Field — 1930s</figcaption>
+          </figure>
+          <figure style="margin-top:24px;">
+            <img src="https://placehold.co/600x280/1a0f00/8b6014?text=Oil+Derricks+Placeholder" alt="Oil Fields" class="heritage-photo">
+            <figcaption class="heritage-caption">East Texas oil fields, circa 1930s</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <div id="ltab-tomb" class="tab-panel">
+      <div class="two-col">
+        <div class="heritage-body">
+          <p>The Fisherman's Tomb recounts the archaeological discovery of what is believed to be the burial site of Saint Peter beneath St. Peter's Basilica in Rome. The book highlights themes of enduring faith, perseverance, and the historical foundations of Christian belief.</p>
+          <p>These values resonated strongly with the Strake family and influenced their commitment to supporting religious, educational, and community initiatives. The depth of George W. Strake Sr.'s Catholic faith is reflected in this work — a faith that built the Foundation and continues to define its mission.</p>
+          <p>Today, the Strake Foundation honors this enduring faith, grounded in a history of integrity, hard work, and devotion to the Church.</p>
+          <a href="#" class="btn-download">Learn More</a>
+        </div>
+        <div>
+          <figure>
+            <img src="https://placehold.co/600x400/1a0030/8060a0?text=The+Fisherman%27s+Tomb" alt="Fisherman's Tomb" class="heritage-photo">
+            <figcaption class="heritage-caption">The Fisherman's Tomb — Faith and the foundations of Christian belief</figcaption>
+          </figure>
+          <figure style="margin-top:24px;">
+            <img src="https://placehold.co/600x280/0f0f25/5050a0?text=St.+Peter%27s+Basilica+Placeholder" alt="St. Peter's" class="heritage-photo">
+            <figcaption class="heritage-caption">St. Peter's Basilica, Vatican City</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     CONTACT PAGE
+════════════════════════════════════════════ -->
+<div id="page-contact" style="display:none;">
+  <div class="page-section">
+    <h1>Contact Us</h1>
+    <div class="section-rule"></div>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <p><strong style="color:#2a1500;">The George W. Strake Foundation</strong></p>
+        <p>
+          [Foundation Address]<br>
+          Houston, Texas<br>
+          <a href="tel:+17135550000">(713) 555-0000</a>
+        </p>
+        <p style="margin-top:20px;font-size:0.88rem;color:#5a4a2a;line-height:1.8;">For grant inquiries, please first review the <a href="#" onclick="showPage('apply')">Application Guidelines</a> and download the application form. Applications must include five supporting documents submitted by email.</p>
+        <p style="font-size:0.88rem;color:#5a4a2a;line-height:1.8;margin-top:12px;">The Foundation does not accept unsolicited calls regarding grant applications. All submissions must be made in writing.</p>
+      </div>
+      <div class="contact-form">
+        <input type="text" placeholder="Your Name">
+        <input type="email" placeholder="Your Email">
+        <input type="text" placeholder="Subject">
+        <textarea placeholder="Your Message"></textarea>
+        <button type="button">Send Message</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-main">
+    <div>
+      <div class="footer-brand-name">
+        ✝ The Strake Foundation
+        <small>Est. 1952 · Houston, Texas</small>
+      </div>
+      <p class="footer-desc">Honoring the legacy of George W. Strake, Sr., Susan Keough Strake, and George W. Strake, Jr. through faithful, conservative stewardship since 1956.</p>
+      <div class="footer-addr">
+        [Foundation Address]<br>
+        Houston, Texas<br>
+        (713) 555-0000
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Grants</h5>
+      <ul>
+        <li><a href="#" onclick="showPage('highlights')">Grantee Highlights</a></li>
+        <li><a href="#" onclick="showPage('grants')">Grants Distribution</a></li>
+        <li><a href="#" onclick="showPage('grants')">Annual Reports</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Applications</h5>
+      <ul>
+        <li><a href="#" onclick="showPage('apply')">Application Guidelines</a></li>
+        <li><a href="#" onclick="showPage('apply')">Application FAQ</a></li>
+        <li><a href="#" onclick="showPage('apply')">Grant Reports</a></li>
+        <li><a href="#" onclick="showPage('apply')">Download Form (PDF)</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Foundation</h5>
+      <ul>
+        <li><a href="#" onclick="showPage('mission')">Mission</a></li>
+        <li><a href="#" onclick="showPage('about')">About Us</a></li>
+        <li><a href="#" onclick="showPage('legacy')">Strake Heritage</a></li>
+        <li><a href="#" onclick="showPage('legacy')">Conroe Oil Field</a></li>
+        <li><a href="#" onclick="showPage('legacy')">The Fisherman's Tomb</a></li>
+        <li><a href="#" onclick="showPage('contact')">Contact Us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 The George W. Strake Foundation. All rights reserved.</span>
+    <span class="footer-cross">✝</span>
+    <span>Hosted via GoDaddy · Traditional Catholic Values</span>
+  </div>
+</footer>
+
+<script>
+// ── PAGE SWITCHING ──
+const pages = ['home','grants','highlights','apply','mission','about','legacy','contact'];
+function showPage(name) {
+  const ids = {
+    home:'page-home', grants:'page-grants', highlights:'page-grants',
+    apply:'page-apply', mission:'page-mission', about:'page-about',
+    legacy:'page-legacy', contact:'page-contact'
+  };
+  document.querySelectorAll('[id^="page-"]').forEach(p => p.style.display='none');
+  const target = document.getElementById(ids[name] || 'page-home');
+  if(target){ target.style.display=''; }
+  window.scrollTo({top:0, behavior:'smooth'});
+  return false;
+}
+
+// ── TABS ──
+function openTab(btn, tabId) {
+  const nav = btn.closest('.tab-nav');
+  nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const container = nav.nextElementSibling.closest
+    ? nav.parentElement
+    : nav.parentElement;
+  nav.parentElement.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById(tabId);
+  if(panel) panel.classList.add('active');
+}
+
+// ── FAQ ──
+function toggleFaq(el) {
+  el.closest('.faq-item').classList.toggle('open');
+}
+
+// ── SLIDER ──
+let current = 0;
+const slides = document.getElementById('slides');
+const numSlides = slides.children.length;
+const dotsContainer = document.getElementById('slider-dots');
+
+// build dots
+for(let i=0;i<numSlides;i++){
+  const d = document.createElement('button');
+  d.className = 'slider-dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsContainer.appendChild(d);
+}
+
+function goTo(n){
+  current = (n + numSlides) % numSlides;
+  slides.style.transform = `translateX(-${current*100}%)`;
+  document.querySelectorAll('.slider-dot').forEach((d,i)=>
+    d.classList.toggle('active', i===current));
+}
+function moveSlide(dir){ goTo(current+dir); }
+setInterval(()=>moveSlide(1), 5000);
+
+// ── SEASON SWITCHER ──
+function setSeason(cls, label){
+  document.body.className = cls;
+  document.getElementById('season-label').textContent = label;
+}
+</script>
+</body>
+</html>
